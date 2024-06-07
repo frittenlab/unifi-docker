@@ -37,7 +37,9 @@ apt-get install -qy --no-install-recommends \
     mongodb-org-server \
     mongodb-org-shell \
     mongodb-org-tools \
-    mongodb-org-mongos
+    mongodb-org-mongos \
+    mongodb-mongosh \
+    mongodb-org-database
 
 curl -fsSL https://dl.ui.com/unifi/unifi-repo.gpg -o /etc/apt/keyrings/unifi-repo.gpg
 
