@@ -55,6 +55,9 @@ rm -f ./unifi.deb
 chown -R unifi:unifi /usr/lib/unifi
 rm -rf /var/lib/apt/lists/*
 
+sed -i 's|/var/lib/mongodb|/unifi/data/db|g' /etc/mongod.conf
+sed -i 's|/var/log/mongodb/mongod.log|/unifi/log/mongod.log|g' /etc/mongod.conf
+
 rm -rf ${ODATADIR} ${OLOGDIR} ${ORUNDIR} ${BASEDIR}/data ${BASEDIR}/run ${BASEDIR}/logs
 mkdir -p ${DATADIR} ${LOGDIR} ${RUNDIR}
 ln -s ${DATADIR} ${BASEDIR}/data
@@ -67,7 +70,3 @@ mkdir -p /var/cert ${CERTDIR}
 ln -s ${CERTDIR} /var/cert/unifi
 
 rm -rf "${0}"
-
-mkdir -p /var/lib/mongodb
-ln -s /var/lib/mongodb ${BASEDIR}/data/db
-ln -s /var/log/mongodb ${BASEDIR}/logs
