@@ -67,3 +67,6 @@ mkdir -p /var/cert ${CERTDIR}
 ln -s ${CERTDIR} /var/cert/unifi
 
 rm -rf "${0}"
+
+ln -s /var/lib/mongodb /unifi/data/db
+ln -s /var/log/mongodb/mongod.log /unifi/log/mongod.log
