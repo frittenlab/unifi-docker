@@ -4,7 +4,17 @@ RUN git clone https://github.com/jacobalberty/permset.git /src && \
     mkdir -p /out && \
     go build -ldflags "-X main.chownDir=/unifi" -o /out/permset
 
-FROM ubuntu:20.04
+FROM ubuntu:22.04 AS base
+
+# arm64-specific stage
+FROM base AS build-arm64
+COPY docker-build-arm64.sh /usr/local/bin/docker-build.sh 
+
+# amd64-specific stage
+FROM base AS build-amd64
+COPY docker-build-amd64.sh /usr/local/bin/docker-build.sh 
+
+FROM build-${TARGETARCH} AS build
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -42,9 +52,9 @@ RUN mkdir -p /usr/unifi \
      /usr/local/docker
 COPY docker-entrypoint.sh /usr/local/bin/
 COPY docker-healthcheck.sh /usr/local/bin/
-COPY docker-build.sh /usr/local/bin/
 COPY functions /usr/unifi/functions
 COPY import_cert /usr/unifi/init.d/
+
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh \
  && chmod +x /usr/unifi/init.d/import_cert \
  && chmod +x /usr/local/bin/docker-healthcheck.sh \
