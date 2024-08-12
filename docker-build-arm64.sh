@@ -15,7 +15,6 @@ if [ "x${1}" == "x" ]; then
     exit 0
 fi
 
-# Install common dependencies
 apt-get update
 apt-get install -qy --no-install-recommends \
     apt-transport-https \
@@ -28,12 +27,20 @@ apt-get install -qy --no-install-recommends \
     libcap2-bin \
     tzdata
 
-# Install MongoDB
-curl -o libssl1.1_1.1.1f-1ubuntu2_arm64.deb https://unipig.de/apt/libssl1.1_1.1.1f-1ubuntu2_arm64.deb && dpkg -i libssl1.1_1.1.1f-1ubuntu2_arm64.deb && rm libssl1.1_1.1.1f-1ubuntu2_arm64.deb
-curl -o libstdc++6.deb https://unipig.de/apt/libstdc%2B%2B6.deb && dpkg -i libstdc++6.deb && rm libstdc++6.deb
-curl -o mongodb-server.deb https://unipig.de/apt/mongodb-server.deb && dpkg -i mongodb-server.deb
+# Add MongoDB Key & Repo
+curl -fsSL https://www.mongodb.org/static/pgp/server-7.0.asc | gpg -o /etc/apt/keyrings/mongodb-server-7.0.gpg --dearmor
 
-# Configure UniFi Repo
+echo 'deb [ arch=amd64,arm64 signed-by=/etc/apt/keyrings/mongodb-server-7.0.gpg ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/7.0 multiverse' | tee /etc/apt/sources.list.d/mongodb-org-7.0.list
+
+apt-get update
+apt-get install -qy --no-install-recommends \
+    mongodb-org-server \
+    mongodb-org-shell \
+    mongodb-org-tools \
+    mongodb-org-mongos \
+    mongodb-mongosh \
+    mongodb-org-database
+
 curl -fsSL https://dl.ui.com/unifi/unifi-repo.gpg -o /etc/apt/keyrings/unifi-repo.gpg
 
 echo 'deb  [ arch=amd64,arm64 signed-by=/etc/apt/keyrings/unifi-repo.gpg ] https://www.ui.com/downloads/unifi/debian stable ubiquiti' | tee /etc/apt/sources.list.d/unifi.list
@@ -47,6 +54,9 @@ apt -qy install ./unifi.deb
 rm -f ./unifi.deb
 chown -R unifi:unifi /usr/lib/unifi
 rm -rf /var/lib/apt/lists/*
+
+sed -i 's|/var/lib/mongodb|/unifi/data/db|g' /etc/mongod.conf
+sed -i 's|/var/log/mongodb/mongod.log|/unifi/log/mongod.log|g' /etc/mongod.conf
 
 rm -rf ${ODATADIR} ${OLOGDIR} ${ORUNDIR} ${BASEDIR}/data ${BASEDIR}/run ${BASEDIR}/logs
 mkdir -p ${DATADIR} ${LOGDIR} ${RUNDIR}
