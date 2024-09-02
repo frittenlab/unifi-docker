@@ -18,7 +18,7 @@ FROM build-${TARGETARCH} AS build
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-ARG PKGURL=https://dl.ui.com/unifi/8.3.32/unifi_sysvinit_all.deb
+ARG PKGURL=https://dl.ui.com/unifi/8.4.59/unifi_sysvinit_all.deb
 
 ENV BASEDIR=/usr/lib/unifi \
     DATADIR=/unifi/data \
@@ -37,10 +37,6 @@ ENV BASEDIR=/usr/lib/unifi \
     UNIFI_GID=999 \
     UNIFI_UID=999
 
-# Install gosu
-# https://github.com/tianon/gosu/blob/master/INSTALL.md
-# This should be integrated with the main run because it duplicates a lot of the steps there
-# but for now while shoehorning gosu in it is seperate
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y gosu; \
