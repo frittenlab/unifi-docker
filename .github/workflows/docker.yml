@@ -9,7 +9,7 @@ on:
 
 env:
   TEST_TAG: frittenbude/unifi:latest
-  PKGURL: https://dl.ui.com/unifi/9.3.43/unifi_sysvinit_all.deb
+  PKGURL: https://dl.ui.com/unifi/9.4.19/unifi_sysvinit_all.deb
 
 jobs:
   build:
